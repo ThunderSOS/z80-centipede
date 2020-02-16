@@ -4,7 +4,7 @@ xy_to_screen            ld a, h                         ; h = y
                         rla                             ;
                         rla                             ;
                         ld h, a                         ;
-                        ld a, l                         ; c = x
+                        ld a, l                         ; l = x
                         rla                             ;
                         rla                             ;
                         rla                             ;
@@ -31,6 +31,19 @@ hl_to_screen            ld a, l                         ; x
                         xor h                           ;
                         ld h,a                          ;
                         ; set 5, h                       ; if drawing to screen buffer
+                        ret                             ;
+
+inc_y                   inc h                           ;
+                        ld a,h                          ;
+                        and 7                           ;
+                        ret nz                          ;
+                        ld a,l                          ;
+                        add a,32                        ;
+                        ld l,a                          ;
+                        ret c                           ;
+                        ld a,h                          ;
+                        sub 8                           ;
+                        ld h,a                          ;
                         ret                             ;
 
 ; de -> offset to add either side
@@ -61,6 +74,8 @@ screen_to_attr_hl       ld a, h                         ;
                         ld h, a                         ;
                         ret                             ;
 
+; (x,y) is a pixel coordinate
+; b = x, c = y
 attr_from_xy            ld a, c                         ; y position.
                         and 248                         ;
                         ld l, a                         ;

@@ -12,21 +12,21 @@ AppFirst                equ $8000                       ; First byte of code (un
 
                         org AppFirst                    ; Start of application
 
-AppEntry                nop
+AppEntry                ld sp, $FFF0
                         ;call attr_at_bc_test
                         ;call font_char_test
                         ;call score_test
                         ;call test_mush_generation;
-                        call seg_sprite_test
+                        jp init_game
                         ;call font_print_test  ;
-                        ret                             ;
+                        ;ret                             ;
 
                         include "gameloop.asm"
                         include "mushrooms.asm"
                         include "seg_handler.asm"       ;
                         include "util.asm"              ;
                         include "screen.asm"            ;
-                        ; include "bullets.asm"           ;
+                        ; include "player.asm"           ;
                         include "noises.asm"            ;
                         include "sprite.asm"            ;
                         include "sprite_metadata.asm"   ;
