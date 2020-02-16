@@ -70,7 +70,7 @@ segment_sprite          dg - - - X X - - - - - - - - - - - ;
                         dg - - - - - - - - - X X - - - - - ;
 
 
-ship_sprite             dg - - - - - - - - - - - - - - - - ;
+player_sprite           dg - - - - - - - - - - - - - - - - ;
                         dg - - X - X - - - - - - - - - - - ;
                         dg - - X - X - - - - - - - - - - - ;
                         dg - - X - X - - - - - - - - - - - ;

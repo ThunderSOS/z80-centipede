@@ -9,18 +9,19 @@ init_game               ld a, 6; (screen_colour)           ;  + 8*7             
                         call init_segments              ;
                         call draw_all_segments          ;
                         ld iy, player
+                        call draw_player
 
 gameloop                ld a, 0                         ;
                         out(254), a                     ;
                         call update_all_segments        ;
-                        ;ld a, 6                         ;
-                        ;out(254), a                     ;
-
 
                         ld h, 0                         ;
                         ld l, 24*8                      ;
                         call hl_to_screen               ;
                         call display_score_digits       ;
+                        call draw_player
+                        ; call move_player
+                        call draw_player
                         xor a                           ;
                         out(254), a                     ;
                         halt                            ;

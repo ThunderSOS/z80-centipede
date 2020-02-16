@@ -1,16 +1,14 @@
 
 ; return sprite base in de
 calc_sprite_base        push hl                         ;
-                        ld a, (ix+seg_dx)               ;
                         rrca                            ;
                         and 3                           ; 4 frame animation
                         rlca                            ;
                         rlca                            ;
                         rlca                            ;
                         rlca                            ; x16
-                        ld e, a                         ;
-                        ld d, 0                         ;
-                        ld hl, segment_sprite           ;
+                        ld l, a                         ;
+                        ld h, 0                         ;
                         add hl, de                      ;
                         ex de, hl                       ;
                         pop hl                          ;
@@ -40,6 +38,8 @@ draw_all_segments       ld ix, segments                 ;
                         ld a, (num_segments)            ;
                         ld b, a                         ;
 draw_segs_lp            push bc                         ;
+                        ld a, (ix+seg_dx)
+                        ld de, segment_sprite
                         call calc_sprite_base           ;
                         ld (ix+seg_last_sprite), de     ;
                         ld h, (ix+seg_dy)               ;
@@ -67,6 +67,8 @@ upd_segs_lp             push bc                         ;
                         ld (ix+seg_last_attr), hl
                         ld a, 2
                         ld (hl), a
+                        ld a, (ix+seg_dx)
+                        ld de, segment_sprite
                         call calc_sprite_base           ;
                         ld (ix+seg_last_sprite), de     ;
                         call draw_seg_1x2               ;
@@ -106,5 +108,30 @@ del_mush_lp             ld a, (de)                      ;
                         ld h, a                         ;
                         ret                             ;
 
-draw_player
+draw_player             ld a, (iy+plyr_dx)
+                        ld c, a
+                        ld de, player_sprite
+                        call calc_sprite_base
+                        ld l, c
+                        ld h, (iy+plyr_dy)
+                        call hl_to_screen
+                        ld b, 8
+draw_plyr_lp            ld a, (de)
+                        xor (hl)
+                        ld (hl), a
+                        inc de
+                        inc l
+                        ld a, (de)
+                        xor (hl)
+                        ld (hl), a
+                        dec l
+                        call inc_y
+                        inc de
+                        djnz draw_plyr_lp
+                        ret
+
+
+
+
+
 
