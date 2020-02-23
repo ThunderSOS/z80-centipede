@@ -10,10 +10,11 @@ segment_def struct      seg_direction ds 1              ;
                         len_seg equ .                   ;
 send
 
-player_def struct       plyr_dx ds 1                    ;
-                        plyr_dy ds 1                    ;
-                        plyr_last_screen ds 2           ;
-                        plyr_last_sprite ds 2           ;
+player_def struct       pl_dx ds 1                      ;
+                        pl_dy ds 1                      ;
+                        pl_last_screen ds 2             ;
+                        pl_last_sprite ds 2             ;
+                        pl_last_attr ds 2               ;
                         len_player equ .                ;
 send
 
@@ -31,7 +32,7 @@ segments                defb 0,0,0,0,0,0,0,0,0          ; segment 1
 
 num_segments            defb 9                          ;
 
-player                  defb 15*8,23*8,0,0,0,0                ;
+player                  defb 15*8,23*8-4,0,0,0,0,0,0  ;
 
 segment_sprite          dg - - - X X - - - - - - - - - - - ;
                         dg - X X X X X X - - - - - - - - - ;
@@ -70,77 +71,77 @@ segment_sprite          dg - - - X X - - - - - - - - - - - ;
                         dg - - - - - - - - - X X - - - - - ;
 
 
-player_sprite           dg - - - - - - - - - - - - - - - - ;
-                        dg - - X - X - - - - - - - - - - - ;
-                        dg - - X - X - - - - - - - - - - - ;
-                        dg - - X - X - - - - - - - - - - - ;
-                        dg - X X X X X - - - - - - - - - - ;
-                        dg - X X X X X - - - - - - - - - - ;
-                        dg X X X X X X X - - - - - - - - - ;
-                        dg X X X X X X X - - - - - - - - - ;
+player_sprite           dg - - - - - - - - - - - - - - - - ; when player_x mod 8 == 0
+                        dg - - X - - X - - - - - - - - - - ; only draw one byte wide
+                        dg - - X - - X - - - - - - - - - - ; and check attrs on adjacent
+                        dg - - X - - X - - - - - - - - - - ; squares for mushrooms
+                        dg - X X X X X X - - - - - - - - - ;
+                        dg - X X X X X X - - - - - - - - - ;
+                        dg X X X X X X X X - - - - - - - - ;
+                        dg X X X X X X X X - - - - - - - - ;
+
+                        dg - - - - - - - - - - - - - - - - ; otherwise we should be clear to draw
+                        dg - - - - X - - X - - - - - - - - ;
+                        dg - - - - X - - X - - - - - - - - ;
+                        dg - - - - X - - X - - - - - - - - ;
+                        dg - - - X X X X X X - - - - - - - ;
+                        dg - - - X X X X X X - - - - - - - ;
+                        dg - - X X X X X X X X - - - - - - ;
+                        dg - - X X X X X X X X - - - - - - ;
 
                         dg - - - - - - - - - - - - - - - - ;
-                        dg - - - - X - X - - - - - - - - - ;
-                        dg - - - - X - X - - - - - - - - - ;
-                        dg - - - - X - X - - - - - - - - - ;
-                        dg - - - X X X X X - - - - - - - - ;
-                        dg - - - X X X X X - - - - - - - - ;
-                        dg - - X X X X X X X - - - - - - - ;
-                        dg - - X X X X X X X - - - - - - - ;
+                        dg - - - - - - X - - X - - - - - - ;
+                        dg - - - - - - X - - X - - - - - - ;
+                        dg - - - - - - X - - X - - - - - - ;
+                        dg - - - - - X X X X X X - - - - - ;
+                        dg - - - - - X X X X X X - - - - - ;
+                        dg - - - - X X X X X X X X - - - - ;
+                        dg - - - - X X X X X X X X - - - - ;
 
                         dg - - - - - - - - - - - - - - - - ;
-                        dg - - - - - - X - X - - - - - - - ;
-                        dg - - - - - - X - X - - - - - - - ;
-                        dg - - - - - - X - X - - - - - - - ;
-                        dg - - - - - X X X X X - - - - - - ;
-                        dg - - - - - X X X X X - - - - - - ;
-                        dg - - - - X X X X X X X - - - - - ;
-                        dg - - - - X X X X X X X - - - - - ;
-
-                        dg - - - - - - - - - - - - - - - - ;
-                        dg - - - - - - - - X - X - - - - - ;
-                        dg - - - - - - - - X - X - - - - - ;
-                        dg - - - - - - - - X - X - - - - - ;
-                        dg - - - - - - - X X X X X - - - - ;
-                        dg - - - - - - - X X X X X - - - - ;
-                        dg - - - - - - X X X X X X X - - - ;
-                        dg - - - - - - X X X X X X X - - - ;
+                        dg - - - - - - - - X - - X - - - - ;
+                        dg - - - - - - - - X - - X - - - - ;
+                        dg - - - - - - - - X - - X - - - - ;
+                        dg - - - - - - - X X X X X X - - - ;
+                        dg - - - - - - - X X X X X X - - - ;
+                        dg - - - - - - X X X X X X X X - - ;
+                        dg - - - - - - X X X X X X X X - - ;
 
 bulletprite             dg - - - - - - - - - - - - - - - - ;
-                        dg - - X - X - - - - - - - - - - - ;
-                        dg - - X - X - - - - - - - - - - - ;
-                        dg - - X - X - - - - - - - - - - - ;
-                        dg - - X - X - - - - - - - - - - - ;
-                        dg - - X - X - - - - - - - - - - - ;
-                        dg - - X - X - - - - - - - - - - - ;
-                        dg - - X - X - - - - - - - - - - - ;
+                        dg - - X - - X - - - - - - - - - - ;
+                        dg - - X - - X - - - - - - - - - - ;
+                        dg - - X - - X - - - - - - - - - - ;
+                        dg - - X - - X - - - - - - - - - - ;
+                        dg - - X - - X - - - - - - - - - - ;
+                        dg - - X - - X - - - - - - - - - - ;
+                        dg - - X - - X - - - - - - - - - - ;
 
                         dg - - - - - - - - - - - - - - - - ;
-                        dg - - - - X - X - - - - - - - - - ;
-                        dg - - - - X - X - - - - - - - - - ;
-                        dg - - - - X - X - - - - - - - - - ;
-                        dg - - - - X - X - - - - - - - - - ;
-                        dg - - - - X - X - - - - - - - - - ;
-                        dg - - - - X - X - - - - - - - - - ;
-                        dg - - - - X - X - - - - - - - - - ;
+                        dg - - - - X - - X - - - - - - - - ;
+                        dg - - - - X - - X - - - - - - - - ;
+                        dg - - - - X - - X - - - - - - - - ;
+                        dg - - - - X - - X - - - - - - - - ;
+                        dg - - - - X - - X - - - - - - - - ;
+                        dg - - - - X - - X - - - - - - - - ;
+                        dg - - - - X - - X - - - - - - - - ;
 
                         dg - - - - - - - - - - - - - - - - ;
-                        dg - - - - - - X - X - - - - - - - ;
-                        dg - - - - - - X - X - - - - - - - ;
-                        dg - - - - - - X - X - - - - - - - ;
-                        dg - - - - - - X - X - - - - - - - ;
-                        dg - - - - - - X - X - - - - - - - ;
-                        dg - - - - - - X - X - - - - - - - ;
-                        dg - - - - - - X - X - - - - - - - ;
+                        dg - - - - - - X - - X - - - - - - ;
+                        dg - - - - - - X - - X - - - - - - ;
+                        dg - - - - - - X - - X - - - - - - ;
+                        dg - - - - - - X - - X - - - - - - ;
+                        dg - - - - - - X - - X - - - - - - ;
+                        dg - - - - - - X - - X - - - - - - ;
+                        dg - - - - - - X - - X - - - - - - ;
 
                         dg - - - - - - - - - - - - - - - - ;
-                        dg X - X - - - - - - - - - - - - - ;
-                        dg X - X - - - - - - - - - - - - - ;
-                        dg X - X - - - - - - - - - - - - - ;
-                        dg X - X - - - - - - - - - - - - - ;
-                        dg X - X - - - - - - - - - - - - - ;
-                        dg X - X - - - - - - - - - - - - - ;
-                        dg X - X - - - - - - - - - - - - - ;
+                        dg X - - X - - - - - - - - - - - - ;
+                        dg X - - X - - - - - - - - - - - - ;
+                        dg X - - X - - - - - - - - - - - - ;
+                        dg X - - X - - - - - - - - - - - - ;
+                        dg X - - X - - - - - - - - - - - - ;
+                        dg X - - X - - - - - - - - - - - - ;
+                        dg X - - X - - - - - - - - - - - - ;
 
 mushroom_sprite         defb 24,126,255,255,60,60,60,60 ;
 

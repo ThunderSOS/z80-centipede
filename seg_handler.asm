@@ -85,9 +85,9 @@ mv_seg_dn               call chk_direction              ;
                         ld a, (ix+seg_dy)               ;
                         add 8                           ;
                         ld (ix+seg_dy), a               ;
-                        ld c, a                         ;
-                        ld b, (ix+seg_dx)               ;
-                        call attr_from_xy               ;
+                        ld hl, (ix+seg_last_attr)       ;
+                        ld bc, 32
+                        add hl, bc
                         ld a, (hl)                      ;
                         cp 68                           ;
                         jr z, obliterate_mushroom       ;

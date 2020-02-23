@@ -108,26 +108,69 @@ del_mush_lp             ld a, (de)                      ;
                         ld h, a                         ;
                         ret                             ;
 
-draw_player             ld a, (iy+plyr_dx)
+draw_player             ld ix, player
+                        ld a, (ix+pl_dx)
                         ld c, a
                         ld de, player_sprite
                         call calc_sprite_base
                         ld l, c
-                        ld h, (iy+plyr_dy)
+                        ld h, (ix+pl_dy)
                         call hl_to_screen
+                        ld (ix+pl_last_screen), hl
+                        push hl
+                        call screen_to_attr_hl
+                        ld (ix+pl_last_attr), hl
+                        pop hl
                         ld b, 8
-draw_plyr_lp            ld a, (de)
-                        xor (hl)
+                        ld a, c
+                        and 7
+                        jr z, draw_player_8
+                        ; ret
+draw_player_16          ld a, (de)
+                        xor(hl)
                         ld (hl), a
-                        inc de
                         inc l
+                        inc de
                         ld a, (de)
                         xor (hl)
                         ld (hl), a
+                        inc de
                         dec l
                         call inc_y
+                        djnz draw_player_16
+                        ld hl, (ix+pl_last_attr)
+                        ld a, 5
+                        ld (hl), a
+                        inc l
+                        ld (hl), a
+                        ld a, (ix+pl_dy)
+                        and 7
+                        ret z
+                        ld a, 5
+                        ld bc, 31
+                        add hl, bc
+                        ld (hl), a
+                        inc l
+                        ld (hl), a
+                        ret
+
+draw_player_8           ld a, (de)
+                        xor (hl)
+                        ld (hl), a
                         inc de
-                        djnz draw_plyr_lp
+                        inc de
+                        call inc_y
+                        djnz draw_player_8
+                        ld hl, (ix+pl_last_attr)
+                        ld a, 5
+                        ld (hl), a
+                        ld a, (ix+pl_dy)
+                        and 7
+                        ret z
+                        ld a, 5
+                        ld bc, 32
+                        add hl, bc
+                        ld (hl), a
                         ret
 
 

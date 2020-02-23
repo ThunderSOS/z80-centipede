@@ -5,44 +5,30 @@ AppFilename             equ "centipede"                 ; What we're called (for
 AppFirst                equ $8000                       ; First byte of code (uncontended memory)
 
                         zeusemulate "48K","ULA+"        ; Set the model and enable ULA+
-                        zeusmem segments, "Segments", 7, true, false;
+                        zeusmem player, "Player", 9, true, false;
                         zeusmem 22528, "Screen", 32, true, false;
 
 ; Start planting code here. (When generating a tape file we start saving from here)
 
                         org AppFirst                    ; Start of application
 
-AppEntry                ld sp, $FFF0
-                        ;call attr_at_bc_test
-                        ;call font_char_test
-                        ;call score_test
-                        ;call test_mush_generation;
-                        jp init_game
-                        ;call font_print_test  ;
-                        ;ret                             ;
+AppEntry                ld sp, $FF40                    ;
 
-                        include "gameloop.asm"
-                        include "mushrooms.asm"
+                        jp interrupt_setup;             ;
+
+                        include "gameloop.asm"          ;
+                        include "mushrooms.asm"         ;
                         include "seg_handler.asm"       ;
-                        include "util.asm"              ;
                         include "screen.asm"            ;
-                        ; include "player.asm"           ;
+                        include "player.asm"            ;
                         include "noises.asm"            ;
                         include "sprite.asm"            ;
                         include "sprite_metadata.asm"   ;
                         include "font.asm"              ;
                         include "score.asm"             ;
+                        include "util.asm"              ;
+                        include "interrupts.asm"
 
-pl_x                    defb 0                          ; player's x coordinate.
-pl_y                    defb 0                          ; player's y coordinate.
-
-bl_x                    defb 0                          ; bullet x coordinate.
-bl_y                    defb 0                          ; bullet y coordinate.
-
-; graphics
-blocks                  defb 16,16,56,56,124,124,254,254 ; player base.
-
-                        defb 0,102,102,102,102,102,102,0 ; player bullet.
 
 ; Stop planting code after this. (When generating a tape file we save bytes below here)
 AppLast                 equ *-1                         ; The last used byte's address
