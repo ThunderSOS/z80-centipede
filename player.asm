@@ -110,7 +110,7 @@ pl_mv_dn                ld a, (ix+pl_dy)                ;
                         ret z                           ;
                         ld c, a
                         and 7
-                        jr pl_mv_dn_boundary
+                        jr pl_mv_dn_boundary            ; this should be jr z
 pl_mv_dn_0              ld a, (ix+pl_dy)
                         add a, 2                        ;
                         ld (ix+pl_dy), a                ;
