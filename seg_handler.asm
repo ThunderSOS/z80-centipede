@@ -34,8 +34,8 @@ mv_seg_rt               ld a, (ix+seg_dx)               ;
                         and 7                           ;
                         jr z, mv_rt_boundary            ;
                         ld a, c                         ;
-mv_rt_2                 ld c, 2                         ;
-                        add a, c                        ;
+mv_rt_2                 inc a                           ;
+                        inc a
                         ld (ix+seg_dx), a               ;
                         ld b, a                         ;
                         ld c, (ix+seg_dy)               ;
@@ -55,8 +55,8 @@ mv_seg_lft              ld a, (ix+seg_dx)               ;
                         and 7                           ; on a char boundary?
                         jr z, mv_lft_boundary           ;
                         ld a, c                         ;
-mv_lft_2                ld c, 2                         ;
-                        sub a, c                        ;
+mv_lft_2                dec a                           ;
+                        dec a                           ;
                         ld (ix+seg_dx), a               ;
                         ret                             ;
 
@@ -83,7 +83,7 @@ mv_seg_dn               call chk_direction              ;
                         cp 23*8                         ; reached bottom of screen?
                         jr z, mv_dn_reset               ;
                         ld a, (ix+seg_dy)               ;
-                        add 8                           ;
+                        add a, 8                        ;
                         ld (ix+seg_dy), a               ;
                         ld hl, (ix+seg_last_attr)       ;
                         ld bc, 32
@@ -125,5 +125,36 @@ obliterate_mushroom     ld a, 2                         ; turn the square red
                         ld (hl), a                      ;
                         ld h, (ix+seg_dy)               ;
                         ld l, (ix+seg_dx)               ;
-                        call delete_mushroom            ;
-                        ret                             ;
+                        jp delete_mushroom              ;
+
+check_collision         ld ix, segments
+                        ld a, (num_segments)
+                        ld b, a
+chk_coll_lp             ld a, (iy+pl_dy)
+                        ld c, (ix+seg_dy)
+                        call compare_unsigned
+                        cp 8
+                        jr c, chk_coll_x
+chk_coll_end            ld de, len_seg
+                        add ix, de
+                        djnz chk_coll_lp
+                        ret
+
+chk_coll_x              ld a, (iy+pl_dx)
+                        ld c, (ix+seg_dx)
+                        call compare_unsigned
+                        cp 6
+                        jr nc, chk_coll_end
+                        ; otherwise...
+
+collision               call draw_player                 ; undraw player
+                        call draw_all_segments           ; undraw segments
+                        call init_segments               ; re-init segments
+                        call init_player
+                        call draw_player
+                        ret
+
+compare_unsigned        sub a, c
+                        ret nc
+                        neg
+                        ret

@@ -1,6 +1,8 @@
 screen_colour           defb 2                          ;
 mushroom_colour         defb 68                         ;
 
+FLAGS_FIRING            equ 1
+
 segment_def struct      seg_direction ds 1              ;
                         seg_dx ds 1                     ;
                         seg_dy ds 1                     ;
@@ -15,8 +17,15 @@ player_def struct       pl_dx ds 1                      ;
                         pl_last_screen ds 2             ;
                         pl_last_sprite ds 2             ;
                         pl_last_attr ds 2               ;
+                        pl_flags ds 1                   ;
                         len_player equ .                ;
 send
+
+bullet_x                defb 0
+bullet_y                defb 0
+bullet_last_sprite      defw 0
+bullet_last_screen      defw 0
+bullet_last_attr        defw 0
 
 ; Table of segments based on above struct
 segments                defb 0,0,0,0,0,0,0,0,0          ; segment 1
@@ -32,7 +41,7 @@ segments                defb 0,0,0,0,0,0,0,0,0          ; segment 1
 
 num_segments            defb 9                          ;
 
-player                  defb 15*8,23*8-4,0,0,0,0,0,0  ;
+player                  defb 15*8,23*8-4,0,0,0,0,0,0,0  ;
 
 segment_sprite          dg - - - X X - - - - - - - - - - - ;
                         dg - X X X X X X - - - - - - - - - ;
@@ -107,7 +116,7 @@ player_sprite           dg - - - - - - - - - - - - - - - - ; when player_x mod 8
                         dg - - - - - - X X X X X X X X - - ;
                         dg - - - - - - X X X X X X X X - - ;
 
-bulletprite             dg - - - - - - - - - - - - - - - - ;
+bullet_sprite           dg - - - - - - - - - - - - - - - - ;
                         dg - - X - - X - - - - - - - - - - ;
                         dg - - X - - X - - - - - - - - - - ;
                         dg - - X - - X - - - - - - - - - - ;
@@ -143,5 +152,13 @@ bulletprite             dg - - - - - - - - - - - - - - - - ;
                         dg X - - X - - - - - - - - - - - - ;
                         dg X - - X - - - - - - - - - - - - ;
 
-mushroom_sprite         defb 24,126,255,255,60,60,60,60 ;
+mushroom_sprite         dg - - - X X - - -
+                        dg - X X X - X X -
+                        dg X X - X X X X X
+                        dg X X X X X X X X
+                        dg - - X X - X - -
+                        dg - - X X X X - -
+                        dg - - X X X X - -
+                        dg - - X X X X - -
+
 

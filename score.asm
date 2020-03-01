@@ -51,7 +51,7 @@ copy_score              ld hl, (score)
                         ld (hiscore+2), hl
                         ret
 
-display_score           ld h, 0                         ; enough room for 'Score: 00000000'
+display_score           ld h, 8                         ; enough room for 'Score: 00000000'
                         ld l, 17*8                      ;
                         ld de, score_string             ;
                         call pr_str_dbl_ht              ;

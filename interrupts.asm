@@ -12,7 +12,7 @@ interrupt_setup         di                              ;
                         im 2                            ; and so we land at the jp InterruptService instruction
                         call init_game                  ; set up and draw main game screen
                         ei                              ; enable interrupts for the game loop
-infinite_loop           ld h, 0                         ;
+infinite_loop           ld h, 8                         ;
                         ld l, 24*8                      ;
                         call hl_to_screen               ;
                         call display_score_digits       ;
