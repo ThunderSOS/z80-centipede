@@ -13,7 +13,7 @@ AppFirst                equ $8000                       ; First byte of code (un
                         org AppFirst                    ; Start of application
 
 AppEntry                ld sp, $FF40                    ;
-                        jp interrupt_setup;             ;
+                        jp show_menu
 
                         include "gameloop.asm"          ;
                         include "mushrooms.asm"         ;
@@ -28,6 +28,7 @@ AppEntry                ld sp, $FF40                    ;
                         include "score.asm"             ;
                         include "util.asm"              ;
                         include "interrupts.asm"        ;
+                        include "menu.asm"
 
 
 ; Stop planting code after this. (When generating a tape file we save bytes below here)

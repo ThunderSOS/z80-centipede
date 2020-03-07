@@ -19,7 +19,7 @@ init_seg_loop           ld a, b                         ;
                         ld (ix+seg_last_screen), de     ;
                         ld (ix+seg_last_sprite), de     ;
                         ld de, len_seg                  ; len_seg = size of the struct
-                        add ix, de                      ; point to next segment
+init_seg_end            add ix, de                      ; point to next segment
                         djnz init_seg_loop              ;
                         ret                             ;
 
@@ -35,7 +35,7 @@ mv_seg_rt               ld a, (ix+seg_dx)               ;
                         jr z, mv_rt_boundary            ;
                         ld a, c                         ;
 mv_rt_2                 inc a                           ;
-                        inc a
+                        inc a                           ;
                         ld (ix+seg_dx), a               ;
                         ld b, a                         ;
                         ld c, (ix+seg_dy)               ;
@@ -86,8 +86,8 @@ mv_seg_dn               call chk_direction              ;
                         add a, 8                        ;
                         ld (ix+seg_dy), a               ;
                         ld hl, (ix+seg_last_attr)       ;
-                        ld bc, 32
-                        add hl, bc
+                        ld bc, 32                       ;
+                        add hl, bc                      ;
                         ld a, (hl)                      ;
                         cp 68                           ;
                         jr z, obliterate_mushroom       ;
@@ -121,40 +121,42 @@ mv_dn_reset             ld a, (top_of_screen)           ;
                         ld (ix+seg_dy), a               ;
                         ret                             ;
 
-obliterate_mushroom     ld a, 2                         ; turn the square red
+obliterate_mushroom     ld a, 2                         ; turn the square red on black
                         ld (hl), a                      ;
                         ld h, (ix+seg_dy)               ;
                         ld l, (ix+seg_dx)               ;
                         jp delete_mushroom              ;
 
-check_collision         ld ix, segments
-                        ld a, (num_segments)
-                        ld b, a
-chk_coll_lp             ld a, (iy+pl_dy)
-                        ld c, (ix+seg_dy)
-                        call compare_unsigned
-                        cp 8
-                        jr c, chk_coll_x
-chk_coll_end            ld de, len_seg
-                        add ix, de
-                        djnz chk_coll_lp
-                        ret
+check_collision         ld ix, segments                 ;
+                        ld a, (num_segments)            ;
+                        ld b, a                         ;
+chk_seg_coll_lp         bit 7, (ix+seg_direction)       ;
+                        jr nz, chk_seg_coll_end
+                        ld a, (iy+pl_dy)                ;
+                        ld c, (ix+seg_dy)               ;
+                        call compare_unsigned           ;
+                        cp 8                            ;
+                        jr c, chk_seg_coll_x            ;
+chk_seg_coll_end        ld de, len_seg                  ;
+                        add ix, de                      ;
+                        djnz chk_seg_coll_lp            ;
+                        ret                             ;
 
-chk_coll_x              ld a, (iy+pl_dx)
-                        ld c, (ix+seg_dx)
-                        call compare_unsigned
-                        cp 6
-                        jr nc, chk_coll_end
+chk_seg_coll_x          ld a, (iy+pl_dx)                ;
+                        ld c, (ix+seg_dx)               ;
+                        call compare_unsigned           ;
+                        cp 6                            ;
+                        jr nc, chk_seg_coll_end         ;
                         ; otherwise...
 
-collision               call draw_player                 ; undraw player
-                        call draw_all_segments           ; undraw segments
-                        call init_segments               ; re-init segments
-                        call init_player
-                        call draw_player
-                        ret
+pl_seg_collision        call draw_player                ; undraw player
+                        call draw_all_segments          ; undraw segments
+                        call init_segments              ; re-init segments
+                        call init_player                ; re-init player
+                        call draw_player                ; draw player in new position
+                        ret                             ;
 
-compare_unsigned        sub a, c
-                        ret nc
-                        neg
-                        ret
+compare_unsigned        sub a, c                        ;
+                        ret nc                          ;
+                        neg                             ;
+                        ret                             ;

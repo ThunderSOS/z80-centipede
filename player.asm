@@ -46,7 +46,7 @@ move_player             ld bc, zeuskeyaddr("Q")         ;
 
 pl_fire                 bit 0, (iy+pl_flags)            ; are we already firing?
                         ret nz                          ;
-                        set 0, (iy+pl_flags)            ;
+                        set 0, (iy+pl_flags)            ; set the 'is firing' flag
                         ld l, (iy+pl_dx)                ;
                         ld a, l                         ;
                         rrca                            ;
@@ -55,29 +55,29 @@ pl_fire                 bit 0, (iy+pl_flags)            ; are we already firing?
                         ld a, l                         ;
                         jr nz, pl_fire_cont             ; if not jump
                         set 1, (iy+pl_flags)            ; set a flag to draw just 8 bit version
-                        ld a, 8                         ; otherwise adjust the position 8 bits
+                        ld a, 4                         ; otherwise adjust the position 4 bits
                         add a, l                        ; to the right
-pl_fire_cont            ld l, a                         ;
+pl_fire_cont            ld l, a                         ; store x position in l
                         ld (bullet_x), a                ;
                         ld a, (iy+pl_dy)                ;
                         sub a, 8                        ; initial bullet y-pos 8 bits above the
                         ld (bullet_y), a                ; player
-                        ld h, a                         ;
+                        ld h, a                         ; store y position in h
                         call hl_to_screen               ;
                         ld (bullet_last_screen), hl     ;
-                        ld a, (iy+pl_dx)                ;
-                        rrca                            ;
-                        and 3                           ;
+                        ld a, (iy+pl_dx)                ; find the right sprite
+                        rrca                            ; 4 sprites so divide by 2
+                        and 3                           ; 0, 1, 2 or 3
                         rlca                            ;
                         rlca                            ;
                         rlca                            ;
-                        rlca                            ;
+                        rlca                            ; x by 16
                         ld l, a                         ;
                         ld h, 0                         ;
-                        ld de, bullet_sprite            ;
+                        ld de, bullet_sprite            ; add on sprite base
                         add hl, de                      ;
-                        ld (bullet_last_sprite), hl     ;
-                        jp draw_bullet                  ;
+                        ld (bullet_last_sprite), hl     ; done
+                        jp draw_bullet                  ; draw bullet
 
 pl_mv_lft               ld a, (iy+pl_dx)                ;
                         and a                           ;
@@ -174,3 +174,4 @@ pl_mv_dn_boundary       ld hl, (iy+pl_last_attr)        ;
                         cp 68                           ;
                         ret z                           ;
                         jr pl_mv_dn_0                   ;
+

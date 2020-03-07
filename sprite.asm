@@ -37,7 +37,9 @@ draw_seg_1x2_lp         ld a, (de)                      ;
 draw_all_segments       ld ix, segments                 ;
                         ld a, (num_segments)            ;
                         ld b, a                         ;
-draw_segs_lp            push bc                         ;
+draw_segs_lp            bit 7, (ix+seg_direction)       ;
+                        jr nz, draw_seg_end
+                        push bc                         ;
                         ld a, (ix+seg_dx)               ;
                         ld de, segment_sprite           ;
                         call calc_sprite_base           ;
@@ -47,16 +49,18 @@ draw_segs_lp            push bc                         ;
                         call hl_to_screen               ;
                         ld (ix+seg_last_screen), hl     ;
                         call draw_seg_1x2               ;
-                        ld de, len_seg                  ;
+                        pop bc
+draw_seg_end            ld de, len_seg                  ;
                         add ix, de                      ;
-                        pop bc                          ;
                         djnz draw_segs_lp               ;
                         ret                             ;
 
 update_all_segments     ld ix, segments                 ;
                         ld a, (num_segments)            ;
                         ld b, a                         ;
-upd_segs_lp             push bc                         ;
+upd_segs_lp             bit 7, (ix+seg_direction)
+                        jr nz, upd_seg_end
+                        push bc                         ;
                         call draw_seg_1x2               ; undraw
                         call mv_seg                     ;
                         ld h, (ix+seg_dy)               ;
@@ -73,7 +77,7 @@ upd_segs_lp             push bc                         ;
                         ld (ix+seg_last_sprite), de     ;
                         call draw_seg_1x2               ;
                         pop bc                          ;
-                        ld de, len_seg                  ;
+upd_seg_end             ld de, len_seg                  ;
                         add ix, de                      ;
                         djnz upd_segs_lp                ;
                         ret                             ;
@@ -90,8 +94,14 @@ draw_mush_lp            ld a, (de)                      ;
                         sub 8                           ;
                         ld h, a                         ;
                         call screen_to_attr_hl          ;
+                        ld a, (hl)
+                        cp 68
+                        ret z
                         ld a, (mushroom_colour)         ;
                         ld (hl), a                      ;
+                        ld a, (num_mushrooms_left)
+                        inc a
+                        ld (num_mushrooms_left), a
                         ret                             ;
 
 delete_mushroom         call hl_to_screen               ;
@@ -106,7 +116,23 @@ del_mush_lp             ld a, (de)                      ;
                         ld a, h                         ;
                         sub 8                           ;
                         ld h, a                         ;
-                        ret                             ;
+                        ld a, (num_mushrooms_left)
+                        dec a
+                        ld (num_mushrooms_left), a
+                        jp z, init_level
+                        ret                             ; zero not set
+
+init_level              call 3503
+                        call init_mushrooms;
+                        call display_score
+                        call init_segments
+                        call init_player
+                        call draw_player
+                        ld (iy+pl_flags), 0
+                        ld bc, $1000
+                        call add_bc_to_score
+                        xor a
+                        ret
 
 draw_player             ld a, (iy+pl_dx)                ;
                         ld c, a                         ;

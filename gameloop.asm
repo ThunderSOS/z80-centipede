@@ -22,6 +22,7 @@ gameloop                ld a, 0                         ;
                         call update_bullet              ;
                         call check_bullet_collision     ;
                         call colour_bullet_square       ;
+                        call check_bseg_collision
                         xor a                           ;
                         out(254), a                     ;
                         ret                             ;

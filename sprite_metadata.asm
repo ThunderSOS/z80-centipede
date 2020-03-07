@@ -1,7 +1,6 @@
 screen_colour           defb 2                          ;
 mushroom_colour         defb 68                         ;
 
-FLAGS_FIRING            equ 1
 
 segment_def struct      seg_direction ds 1              ;
                         seg_dx ds 1                     ;
@@ -41,7 +40,11 @@ segments                defb 0,0,0,0,0,0,0,0,0          ; segment 1
 
 num_segments            defb 9                          ;
 
-player                  defb 15*8,23*8-4,0,0,0,0,0,0,0  ;
+initial_num_mushrooms   defb 50
+num_mushrooms           defb 50
+num_mushrooms_left      defb 0
+
+player                  defb 15*8,23*8,0,0,0,0,0,0,0  ;
 
 segment_sprite          dg - - - X X - - - - - - - - - - - ;
                         dg - X X X X X X - - - - - - - - - ;
@@ -143,8 +146,8 @@ bullet_sprite           dg - - - - - - - - - - - - - - - - ;
                         dg - - - - - - X - - X - - - - - - ;
                         dg - - - - - - X - - X - - - - - - ;
 
-                        dg - - - - - - - - - - - - - - - - ;
-                        dg X - - X - - - - - - - - - - - - ;
+                        dg - - - - - - - - - - - - - - - - ;  this one is drawn as an 8 bit sprite
+                        dg X - - X - - - - - - - - - - - - ;  shifted to the left by 8 pixels
                         dg X - - X - - - - - - - - - - - - ;
                         dg X - - X - - - - - - - - - - - - ;
                         dg X - - X - - - - - - - - - - - - ;

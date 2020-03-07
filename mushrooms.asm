@@ -1,5 +1,6 @@
 
-init_mushrooms          ld b, 50                        ;
+init_mushrooms          ld a, (num_mushrooms)           ;
+                        ld b, a
 init_mush_lp            call get_random_8               ;
                         and 31                          ;
                         ld l, a                         ;
