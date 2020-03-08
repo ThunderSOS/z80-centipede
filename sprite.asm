@@ -125,6 +125,7 @@ del_mush_lp             ld a, (de)                      ;
 init_level              call 3503
                         call init_mushrooms;
                         call display_score
+                        call display_lives
                         call init_segments
                         call init_player
                         call draw_player
@@ -219,20 +220,6 @@ draw_bullet_16          ld a, (de)                      ;
                         dec l                           ;
                         call inc_y                      ;
                         djnz draw_bullet_16             ;
-                        ;ld hl, (bullet_last_attr)       ;
-                        ;ld a, (hl)
-                        ;cp 68
-                        ;jr z, bullet_mush_coll
-                        ;inc l
-                        ;ld a, (hl)
-                        ;cp 68
-                        ;set 2, (iy+pl_flags)
-                        ;jr z, bullet_mush_coll
-                        ;dec l
-                        ;ld a, 7                         ;
-                        ;ld (hl), a                      ;
-                        ;inc l                           ;
-                        ;ld (hl), a                      ;
                         ret                             ;
 
 draw_bullet_8           ld a, (de)                      ;
@@ -242,12 +229,6 @@ draw_bullet_8           ld a, (de)                      ;
                         inc de                          ;
                         call inc_y                      ;
                         djnz draw_bullet_8              ;
-                        ;ld hl, (bullet_last_attr)       ;
-                        ;ld a, (hl)
-                        ;cp 68
-                        ;jr z, bullet_mush_coll
-                        ;ld a, 7                         ;
-                        ;ld (hl), a                      ;
                         ret                             ;
 
 

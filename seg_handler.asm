@@ -149,7 +149,12 @@ chk_seg_coll_x          ld a, (iy+pl_dx)                ;
                         jr nc, chk_seg_coll_end         ;
                         ; otherwise...
 
-pl_seg_collision        call draw_player                ; undraw player
+pl_seg_collision        ld a, (lives)                   ;
+                        dec a                           ;
+                        jp z, show_menu                 ;
+                        ld (lives), a                   ;
+                        call display_lives_digits       ;
+                        call draw_player                ; undraw player
                         call draw_all_segments          ; undraw segments
                         call init_segments              ; re-init segments
                         call init_player                ; re-init player

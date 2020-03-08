@@ -93,5 +93,9 @@ chk_bseg_coll_x         ld a, (bullet_x)                ;
 
 bseg_collision          set 7, (ix+seg_direction)
                         call draw_seg_1x2
+                        call draw_bullet
+                        ld (iy+pl_flags), 0
+                        ld bc, $600
+                        call add_bc_to_score
                         ret
 

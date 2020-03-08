@@ -6,6 +6,7 @@ init_player             ld a, 15*8                      ;
                         ld hl, 0                        ;
                         ld (iy+pl_last_screen), hl      ;
                         ld (iy+pl_last_attr), hl        ;
+                        ;ld (iy+pl_flags), 0
                         ret                             ;
 
 move_player             ld bc, zeuskeyaddr("Q")         ;
@@ -128,7 +129,7 @@ pl_mv_rt_boundary       ld hl, (iy+pl_last_attr)        ;
                         jr pl_mv_rt_0                   ;
 
 pl_mv_up                ld a, (iy+pl_dy)                ;
-                        cp 32                           ;
+                        cp 22*8                         ;
                         ret z                           ;
                         and 7                           ;
                         jr z, pl_mv_up_boundary         ;
